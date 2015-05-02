@@ -1,0 +1,74 @@
+<title>Shared Todo App </title>
+<div class="container">
+  <div class="row">
+    <div class="span4">
+      <h1>Motz's shared toDo App</h1>
+      <hr>
+      <!--
+		<%= form_tag("/todos/add", :method=>"post") do %>
+		  <%= text_field_tag(:todo_text) %>
+		  <%= submit_tag("Add todo", :class=>"btn") %>
+		<% end %>
+	-->
+	 <% if flash[:error] %> <!-- este flash es la forma en la que se pueden pasar mensajes del controlador a la vista -->
+	     <div class="alert alert-danger" role="alert"><strong><%= flash[:error] %></strong></div>
+  	<% end %>
+
+	<% if flash[:success] %>
+		<div class="alert alert-success" role="alert"><strong><%= flash[:success] %></strong></div>
+	<% end %>
+
+	<!-- Este link me fue muy util para solucionar el probkema de las acciones 
+	http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-form_for-label-Resource-oriented+style-->
+	<%= form_for @new_todo do |f|  %>  <!-- { :action => "create" }  do |f|  %> -->
+		<%= f.label  "item toDo" %>
+	    <%= f.text_field  :todo_item, class: "form-control" %>
+	    <%= f.label  "deadline" %>
+	    <%= f.date_field  :deadline, class: "form-control" %>
+	    <br/>
+	    <%= f.submit "Ok", class: "btn btn-primary" %>
+	<%end%>
+
+	<br/>
+
+    <p>This is ma list of toDos ma frond</p>
+    <div class="well">
+    	<!--<ul>
+	     	<% @todo_items.each do |t| %>
+	    	<li> <%= t.todo_item %> </li>
+	    	<% end %>
+  		</ul>
+  	-->
+
+  		<%= form_tag("/todos/complete/", :method => "post") do %>
+			<ul style="list-style-type:none;">
+			<% if @todo_items.first != nil %>
+				<% @todo_items.each do |t| %> 
+				    <!-- <li> <%= check_box_tag  "todos_checkbox[]",t.id %> <%= t.todo_item %>  </li> -->
+				     <% if t.completed == true %>
+					     <li style="color:grey;"> <%= check_box_tag  "todos_checkbox[]",t.id %>  
+					     	<strike><%= t.todo_item %></strike> <%= link_to "Delete", delete_path(:id => t.id) %>
+					     </li>
+
+					  <% else %>
+
+					     <li> <%= check_box_tag  "todos_checkbox[]",t.id %> <%= t.todo_item %> 
+					     	  <% if !t.deadline.nil?%> | <%= time_tag t.deadline %><% end %> <%= link_to "Edit", index_path(:id => t.id) %>
+					     </li>
+					  <% end %>
+
+				<%end%>
+				</ul>
+				<%= submit_tag("Toggle Todos", :class=>"btn btn-success") %>
+				<%= submit_tag("Delete", :name=>"deletenson", :class=>"btn btn-danger") %>
+			<% else %>
+				<h3>No hay ToDos disponibles en este momento</h3>
+			<% end %>
+		<%end %>
+
+
+      </div> <!-- well -->
+    </div> <!-- span4 -->
+  </div> <!-- row -->
+</div> <!-- container -->
+
